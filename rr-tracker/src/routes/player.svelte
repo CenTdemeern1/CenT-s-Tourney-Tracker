@@ -1,4 +1,6 @@
 <script lang="ts">
+    export let position: number;
+    export let deduped_position: number;
     export let name: string;
     export let rings: number;
     export let beingChased: boolean;
@@ -19,14 +21,16 @@
     }
 </script>
 
-<div class="player {beingChased ? "being-chased" : "not-being-chased"} {rings > 0 ? "has-rings" : "has-no-rings"} {exploding ? "explode" : ""}">
-    <img src="/player_backdrop.png" alt="Player background backdrop" class="player-background" />
-    <img src="/player_backdrop_intense.png" alt="Player background backdrop with intense colors" class="player-background player-background-intense" />
-    <img src="/ring/ring1.png" alt="Spinning ring icon" class="ring" />
-    <img src="/spb_rings.gif" alt="Self-Propelled Bomb chasing a player with rings" class="spb spb-rings" />
-    <img src="/spb_no_rings.gif" alt="Self-Propelled Bomb chasing a player without rings" class="spb spb-no-rings" />
-    <p class="ring-counter">{rings}</p>
-    <p class="name">{name}</p>
+<div class="player dd-position-{deduped_position} {beingChased ? "being-chased" : "not-being-chased"} {rings > 0 ? "has-rings" : "has-no-rings"} {exploding ? "explode" : ""}">
+    <div class="player-transform">
+        <img src="/player_backdrop.png" alt="Player background backdrop" class="player-background" />
+        <img src="/player_backdrop_intense.png" alt="Player background backdrop with intense colors" class="player-background player-background-intense" />
+        <img src="/ring/ring1.png" alt="Spinning ring icon" class="ring" />
+        <img src="/spb_rings.gif" alt="Self-Propelled Bomb chasing a player with rings" class="spb spb-rings" />
+        <img src="/spb_no_rings.gif" alt="Self-Propelled Bomb chasing a player without rings" class="spb spb-no-rings" />
+        <p class="ring-counter">{rings}</p>
+        <p class="name">{name}</p>
+    </div>
 </div>
 
 <style>
@@ -35,6 +39,11 @@
         width: 384px;
         height: 64px;
         margin: 0;
+    }
+
+    .player-transform {
+        width: 100%;
+        height: 100%;
     }
 
     .player-background {
@@ -47,15 +56,15 @@
         opacity: 0;
     }
 
-    .explode>.player-background-intense {
+    .explode>*>.player-background-intense {
         animation: explosion-recolor 2.5s;
     }
 
-    .damage {
+    .damage>.player-transform {
         animation: shake 0.5s linear;
     }
 
-    .explode {
+    .explode>.player-transform {
         animation: explosion 2.5s, shake2 0.5s linear 0.5s;
         transform-origin: 50% 75%;
     }
@@ -72,19 +81,19 @@
         translate: 6px -10px;
     }
 
-    .not-being-chased>.spb {
+    .not-being-chased>*>.spb {
         display: none;
     }
 
-    .has-no-rings>.spb-rings {
+    .has-no-rings>*>.spb-rings {
         display: none;
     }
 
-    .has-rings>.spb-no-rings {
+    .has-rings>*>.spb-no-rings {
         display: none;
     }
 
-    .player>p {
+    .player>*>p {
         position: absolute;
     }
 
