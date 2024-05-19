@@ -1,11 +1,15 @@
 <head>
-    <title>ADB Ring Racers Tourney Tracker</title>
+    <title>CenT's Tourney Tracker</title>
 </head>
 
 <body>
-    <h1>ADB Ring Racers Tourney Tracker</h1>
+    <h1>CenT's Tourney Tracker</h1>
 
-    <div class="live-stats players">
+    <div class="live-stats">
+        <div class="lap-indicators">
+        </div>
+        <div class="players">
+        </div>
     </div>
 
     {#if displayedPlayers.length == 0}
@@ -23,13 +27,16 @@
 <script lang="ts">
     import { browser } from '$app/environment';
     import Player from './player.svelte';
+    import LapIndicator from './lap_indicator.svelte';
 
     const displayedPlayers: Player[] = [];
+    const lapIndicators: LapIndicator[] = [];
     type PlayerData = {
         pos: number,
         rings: number,
         spb: boolean,
         expl: boolean,
+        lap: number,
         rd: number,
         name: string
     };
@@ -45,26 +52,63 @@
             }, 500);
         };
         ws.onmessage = m => {
-            const liveStats = document.querySelector(".live-stats")!;
+            const liveLapStats = document.querySelector(".live-stats>.lap-indicators")!;
+            const livePlayerStats = document.querySelector(".live-stats>.players")!;
 
             let data: Data = JSON.parse(m.data);
 
             // Deduplicate positions
-            const sorted_players = data.players.toSorted((a, b) => a.pos - b.pos).map(e => e.name);
+            const sortedPlayers = data.players.toSorted((a, b) => a.pos - b.pos);
             let deduped_pos_by_name: {[key: string]: number} = {};
-            for (let position = 0; position < sorted_players.length; position++) {
-                const name = sorted_players[position];
-                deduped_pos_by_name[name] = position + 1;
+            // Also use this as an opportunity to track everyone's laps
+            const laps: {lap: number, count: number}[] = [];
+            for (let position = 0; position < sortedPlayers.length; position++) {
+                const sortedPlayer = sortedPlayers[position];
+                deduped_pos_by_name[sortedPlayer.name] = position + 1;
+                if (laps.length != 0 && laps[laps.length - 1].lap == sortedPlayer.lap) {
+                    laps[laps.length - 1].count++;
+                } else {
+                    laps.push({
+                        lap: sortedPlayer.lap,
+                        count: 1,
+                    });
+                }
+            }
+
+            // Set lap info
+            let lapI = 0;
+            while (laps.length > lapIndicators.length) {
+                const lapSet = laps[lapI];
+                let newLapIndicator = new LapIndicator({
+                    target: liveLapStats,
+                    props: {
+                        lap: lapSet.lap,
+                        height: lapSet.count
+                    }
+                });
+                lapIndicators.unshift(newLapIndicator);
+                lapI++;
+            }
+            for (lapI = 0; lapI < laps.length; lapI++) {
+                const lapSet = laps[lapI];
+                lapIndicators[lapI].$set({
+                    lap: lapSet.lap,
+                    height: lapSet.count
+                });
+            }
+            while (laps.length < lapIndicators.length) {
+                lapIndicators.pop()?.$destroy();
             }
             
+            // Set player info
             if (data.players.length != displayedPlayers.length) {
                 displayedPlayers.length = 0;
-                while (liveStats.firstChild) {
-                    liveStats.removeChild(liveStats.firstChild);
+                while (livePlayerStats.firstChild) {
+                    livePlayerStats.removeChild(livePlayerStats.firstChild);
                 }
                 for (const player of data.players) {
                     let newPlayer = new Player({
-                        target: liveStats,
+                        target: livePlayerStats,
                         props: {
                             position: player.pos,
                             deduped_position: deduped_pos_by_name[player.name],
@@ -109,10 +153,15 @@
         color: white;
     }
 
-    /* .players {
+    .lap-indicators {
+        position: absolute;
         display: flex;
-        flex-direction: column;
-    } */
+        flex-direction: column-reverse;
+    }
+
+    .players {
+        position: absolute;
+    }
     
     :global(.players>div) {
 	    transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);

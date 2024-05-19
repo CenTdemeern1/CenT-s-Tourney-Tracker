@@ -56,7 +56,7 @@
         opacity: 0;
     }
 
-    .explode>*>.player-background-intense {
+    .explode>.player-transform>.player-background-intense {
         animation: explosion-recolor 2.5s;
     }
 
@@ -81,19 +81,19 @@
         translate: 6px -10px;
     }
 
-    .not-being-chased>*>.spb {
+    .not-being-chased>.player-transform>.spb {
         display: none;
     }
 
-    .has-no-rings>*>.spb-rings {
+    .has-no-rings>.player-transform>.spb-rings {
         display: none;
     }
 
-    .has-rings>*>.spb-no-rings {
+    .has-rings>.player-transform>.spb-no-rings {
         display: none;
     }
 
-    .player>*>p {
+    .player>.player-transform>p {
         position: absolute;
     }
 
