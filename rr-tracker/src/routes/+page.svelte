@@ -36,6 +36,7 @@
         rings: number,
         spb: boolean,
         expl: boolean,
+        dmg: boolean,
         lap: number,
         sp: number,
         rd: number,
@@ -117,6 +118,7 @@
                             rings: player.rings,
                             beingChased: player.spb,
                             exploding: player.expl,
+                            damaged: player.dmg,
                             speedPercentage: player.sp
                         }
                     });
@@ -142,6 +144,14 @@
                             exploding: false
                         });
                     }, 2500); // Explosion animation takes 2500 ms
+                }
+                if (playerData.dmg) {
+                    newPlayerData.damaged = playerData.dmg;
+                    setTimeout(() => {
+                        player.$set({
+                            damaged: false
+                        });
+                    }, 500); // Damage animation takes 500 ms
                 }
                 player.$set(newPlayerData);
             }

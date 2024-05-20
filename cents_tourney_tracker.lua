@@ -11,6 +11,9 @@ local spb_targets = {}
 -- A list of recently exploded players
 local recent_explosions = {}
 
+-- A list of recently damaged players
+local recent_damaged = {}
+
 local function log_game_data()
     if consoleplayer ~= server then
         return
@@ -38,6 +41,7 @@ local function log_game_data()
                 tostring(players[playern].rings) .. " " ..
                 tostring(spb_targets[players[playern].name] ~= nil) .. " " ..
                 tostring(recent_explosions[players[playern].name] ~= nil) .. " " ..
+                tostring(recent_damaged[players[playern].name] ~= nil) .. " " ..
                 tostring(lap) .. " " ..
                 tostring(speed_percentage) .. " " ..
                 tostring(players[playern].karthud[khud_ringdelay]) .. " " ..
@@ -52,6 +56,10 @@ local function log_game_data()
     for k in pairs(recent_explosions) do
         recent_explosions[k] = nil
     end
+    -- Remove all recent damage
+    for k in pairs(recent_damaged) do
+        recent_damaged[k] = nil
+    end
 end
 
 local function find_spb_target(spb)
@@ -62,6 +70,14 @@ local function find_spb_target(spb)
     if spb.tracer then
         spb_targets[spb.tracer.player.name] = true
     end
+end
+
+local function log_damage(target, inflictor, source, damage, damagetype)
+    if consoleplayer ~= server then
+        return
+    end
+
+    recent_damaged[target.player.name] = true
 end
 
 local function log_explosions(target, inflictor, source, damagetype)
@@ -90,3 +106,4 @@ addHook("PreThinkFrame", reset)
 addHook("PostThinkFrame", log_game_data)
 addHook("MobjThinker", find_spb_target, MT_SPB)
 addHook("MobjDeath", log_explosions, MT_PLAYER)
+addHook("MobjDamage", log_damage, MT_PLAYER)

@@ -4,6 +4,7 @@
     export let name: string;
     export let rings: number;
     export let beingChased: boolean;
+    export let damaged: boolean;
     export let exploding: boolean;
     export let speedPercentage: number;
     let ringFrame = 0;
@@ -26,7 +27,7 @@
     }
 </script> -->
 
-<div class="player dd-position-{deduped_position} {beingChased ? "being-chased" : "not-being-chased"} {rings > 0 ? "has-rings" : "has-no-rings"} {exploding ? "explode" : ""}">
+<div class="player dd-position-{deduped_position} {beingChased ? "being-chased" : "not-being-chased"} {rings > 0 ? "has-rings" : "has-no-rings"} {exploding ? "explode" : ""} {damaged ? "damage" : ""}">
     <div class="player-transform">
         <img src="/player_backdrop.png" alt="Player background backdrop" class="player-background" />
         <img src="/player_backdrop_intense.png" alt="Player background backdrop with intense colors" class="player-background player-background-intense" />
