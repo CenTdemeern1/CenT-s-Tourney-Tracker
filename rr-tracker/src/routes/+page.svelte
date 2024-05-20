@@ -31,6 +31,10 @@
 
     const displayedPlayers: Player[] = [];
     const lapIndicators: LapIndicator[] = [];
+    let previousData: Data = {
+        players: []
+    };
+
     type PlayerData = {
         pos: number,
         rings: number,
@@ -129,6 +133,7 @@
             for (let playerN = 0; playerN < data.players.length; playerN++) {
                 const player = displayedPlayers[playerN];
                 const playerData = data.players[playerN];
+                const previousPlayerData = previousData.players[playerN];
                 let newPlayerData: any = {
                     position: playerData.pos,
                     deduped_position: deduped_pos_by_name[playerData.name],
@@ -137,7 +142,7 @@
                     beingChased: playerData.spb,
                     speedPercentage: playerData.sp
                 };
-                if (playerData.expl) {
+                if (playerData.expl && !previousPlayerData?.expl) {
                     newPlayerData.exploding = playerData.expl;
                     setTimeout(() => {
                         player.$set({
@@ -145,7 +150,7 @@
                         });
                     }, 2500); // Explosion animation takes 2500 ms
                 }
-                if (playerData.dmg) {
+                if (playerData.dmg && !previousPlayerData?.dmg) {
                     newPlayerData.damaged = playerData.dmg;
                     setTimeout(() => {
                         player.$set({
@@ -155,6 +160,7 @@
                 }
                 player.$set(newPlayerData);
             }
+            previousData = data;
         };
     }
 
