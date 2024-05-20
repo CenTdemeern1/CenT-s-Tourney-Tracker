@@ -52,7 +52,7 @@ while True:
                 if line == "================ END PLAYERS DATA ================":
                     break
                 try:
-                    position, rings, being_chased_by_spb, exploded, lap, ring_delay, name = line.split(" ", maxsplit=6)
+                    position, rings, being_chased_by_spb, exploded, lap, speed_percentage, ring_delay, name = line.split(" ", maxsplit=7)
                 except Exception as e:
                     print(f"Error while parsing players data: {e}")
                 try:
@@ -62,6 +62,7 @@ while True:
                         "spb": being_chased_by_spb == "true",
                         "expl": exploded == "true",
                         "lap": int(lap),
+                        "sp": int(speed_percentage),
                         "rd": int(ring_delay),
                         "name": name
                     })

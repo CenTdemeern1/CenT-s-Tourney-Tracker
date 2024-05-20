@@ -37,6 +37,7 @@
         spb: boolean,
         expl: boolean,
         lap: number,
+        sp: number,
         rd: number,
         name: string
     };
@@ -116,6 +117,7 @@
                             rings: player.rings,
                             beingChased: player.spb,
                             exploding: player.expl,
+                            speedPercentage: player.sp
                         }
                     });
                     displayedPlayers.push(newPlayer);
@@ -131,6 +133,7 @@
                     name: playerData.name,
                     rings: playerData.rings,
                     beingChased: playerData.spb,
+                    speedPercentage: playerData.sp
                 };
                 if (playerData.expl) {
                     newPlayerData.exploding = playerData.expl;

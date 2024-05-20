@@ -5,10 +5,15 @@
     export let rings: number;
     export let beingChased: boolean;
     export let exploding: boolean;
+    export let speedPercentage: number;
     let ringFrame = 0;
+
+    function getSpeedDigit(from: number, digit: 0|1|2): string {
+        return Math.min(from, 999).toString().padStart(3, "0")[digit];
+    }
 </script>
 
-<script lang="ts" context="module">
+<!-- <script lang="ts" context="module">
     import { browser } from '$app/environment';
 
     if (browser) {
@@ -19,7 +24,7 @@
             ringFrames.push(image);
         }
     }
-</script>
+</script> -->
 
 <div class="player dd-position-{deduped_position} {beingChased ? "being-chased" : "not-being-chased"} {rings > 0 ? "has-rings" : "has-no-rings"} {exploding ? "explode" : ""}">
     <div class="player-transform">
@@ -31,18 +36,29 @@
         <p class="ring-counter">{rings}</p>
         <p class="name">{name}</p>
     </div>
+    <div class="player-speed">
+        <img src="/speedometer.png" alt="Speedometer icon" class="speedometer-icon" />
+        <div class="speedometer-digits">
+            <img src="/digits/digit{getSpeedDigit(speedPercentage, 0)}.png" alt="Speedometer digit 1" class="speedometer-digit speedometer-digit-left" />
+            <img src="/digits/digit{getSpeedDigit(speedPercentage, 1)}.png" alt="Speedometer digit 2" class="speedometer-digit speedometer-digit-middle" />
+            <img src="/digits/digit{getSpeedDigit(speedPercentage, 2)}.png" alt="Speedometer digit 3" class="speedometer-digit speedometer-digit-right" />
+        </div>
+        <img src="/percent.png" alt="Percent sign" class="speedometer-percent" />
+    </div>
 </div>
 
 <style>
     .player {
         image-rendering: pixelated;
-        width: 384px;
+        /* width: 384px; */
         height: 64px;
         margin: 0;
+        display: flex;
+        flex-direction: row;
     }
 
     .player-transform {
-        width: 100%;
+        width: 384px;
         height: 100%;
     }
 
@@ -104,6 +120,40 @@
     .name {
         translate: 150px 6px;
         color: black;
+    }
+
+    .player-speed {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        /* width: 32px; */
+        height: 100%;
+    }
+
+    .speedometer-icon {
+        height: 32px;
+    }
+
+    .speedometer-digits {
+        display: flex;
+        flex-direction: row;
+    }
+
+    .speedometer-digit {
+        height: 16px;
+    }
+
+    .speedometer-digit-left {
+        translate: 2px;
+        padding-left: 4px;
+    }
+
+    .speedometer-digit-right {
+        translate: -2px;
+    }
+
+    .speedometer-percent {
+        height: 16px;
     }
 
     @keyframes shake {
