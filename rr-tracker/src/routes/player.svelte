@@ -1,13 +1,13 @@
 <script lang="ts">
     export let position: number;
-    export let deduped_position: number;
+    export let dedupedPosition: number;
     export let name: string;
     export let rings: number;
     export let beingChased: boolean;
     export let damaged: boolean;
     export let exploding: boolean;
     export let speedPercentage: number;
-    let ringFrame = 0;
+    export let ringDelay: 0 | 1 | 2 | 3 | 4 | 5 | 6;
 
     function getSpeedDigit(from: number, digit: 0|1|2): string {
         return Math.min(from, 999).toString().padStart(3, "0")[digit];
@@ -27,11 +27,11 @@
     }
 </script> -->
 
-<div class="player dd-position-{deduped_position} {beingChased ? "being-chased" : "not-being-chased"} {rings > 0 ? "has-rings" : "has-no-rings"} {exploding ? "explode" : ""} {damaged ? "damage" : ""}">
+<div class="player dd-position-{dedupedPosition} {beingChased ? "being-chased" : "not-being-chased"} {rings > 0 ? "has-rings" : "has-no-rings"} {exploding ? "explode" : ""} {damaged ? "damage" : ""}">
     <div class="player-transform">
         <img src="/player_backdrop.png" alt="Player background backdrop" class="player-background" />
         <img src="/player_backdrop_intense.png" alt="Player background backdrop with intense colors" class="player-background player-background-intense" />
-        <img src="/ring/ring1.png" alt="Spinning ring icon" class="ring" />
+        <img src="/ring/ring{ringDelay}.webp" alt="Spinning ring icon" class="ring" />
         <img src="/spb_rings.gif" alt="Self-Propelled Bomb chasing a player with rings" class="spb spb-rings" />
         <img src="/spb_no_rings.gif" alt="Self-Propelled Bomb chasing a player without rings" class="spb spb-no-rings" />
         <p class="ring-counter">{rings}</p>

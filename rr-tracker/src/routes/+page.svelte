@@ -43,7 +43,7 @@
         dmg: boolean,
         lap: number,
         sp: number,
-        rd: number,
+        rd: 0 | 1 | 2 | 3 | 4 | 5 | 6,
         name: string
     };
     type Data = {
@@ -117,13 +117,14 @@
                         target: livePlayerStats,
                         props: {
                             position: player.pos,
-                            deduped_position: deduped_pos_by_name[player.name],
+                            dedupedPosition: deduped_pos_by_name[player.name],
                             name: player.name,
                             rings: player.rings,
                             beingChased: player.spb,
                             exploding: player.expl,
                             damaged: player.dmg,
-                            speedPercentage: player.sp
+                            speedPercentage: player.sp,
+                            ringDelay: player.rd
                         }
                     });
                     displayedPlayers.push(newPlayer);
@@ -136,11 +137,12 @@
                 const previousPlayerData = previousData.players[playerN];
                 let newPlayerData: any = {
                     position: playerData.pos,
-                    deduped_position: deduped_pos_by_name[playerData.name],
+                    dedupedPosition: deduped_pos_by_name[playerData.name],
                     name: playerData.name,
                     rings: playerData.rings,
                     beingChased: playerData.spb,
-                    speedPercentage: playerData.sp
+                    speedPercentage: playerData.sp,
+                    ringDelay: playerData.rd
                 };
                 if (playerData.expl && !previousPlayerData?.expl) {
                     newPlayerData.exploding = playerData.expl;
