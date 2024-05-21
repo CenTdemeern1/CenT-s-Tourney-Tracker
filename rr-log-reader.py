@@ -31,6 +31,9 @@ log = open("/Users/centdemeern1/ringracers/latest-log.txt")
 
 read_buffer = ""
 
+if "--ignore-catch-up" in __import__("sys").argv:
+    log.read()
+
 def await_next_line():
     global read_buffer
     while True:
