@@ -1,0 +1,39 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Launch frontend: development mode",
+            "request": "launch",
+            "runtimeArgs": [
+                "run",
+                "dev",
+                "--",
+                "--host"
+            ],
+            "runtimeExecutable": "npm",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node",
+            "cwd": "${workspaceFolder}/rr-tracker"
+        },
+        {
+            "name": "Launch Tourney Tracker",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "rr-log-reader.py",
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "Launch Tourney Tracker: No Catch-up",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "rr-log-reader.py",
+            "args": ["--ignore-catch-up"],
+            "console": "integratedTerminal"
+        }
+    ]
+}
