@@ -50,8 +50,43 @@ def await_next_line():
             return line
 
 
+gp_points = {}
+
 def calculate_gp_points(results: dict):
     print(results)
+    # Count players
+    all_players = [
+        x
+        for xs in results.values()
+        for x in xs
+    ]
+    player_count = len(all_players)
+    for position in results:
+        if position == -1:
+            points = 0
+        else:
+            points = player_count - position
+
+            # The following is sourced from k_grandprix.c:66
+            match player_count:
+                case 0 | 1 | 2: # 1v1
+                    pass # No bonus needed.
+                case 3 | 4: # 3-4P
+                    if position == 1: points += 1 # 1st gets +1 extra point
+                case 5 | 6: # 5-6P
+                    if position == 1: points += 3 # 1st gets +3 extra points
+                    elif position == 2: points += 1 # 2nd gets +1 extra point
+                case _: # Normal matches
+                    if position == 1: points += 5 # 1st gets +5 extra points
+                    elif position == 2: points += 3 # 2nd gets +3 extra points
+                    elif position == 3: points += 1 # 3rd gets +1 extra point
+        
+        for player in results[position]:
+            gp_points[player] = gp_points.get(player, 0) + points
+    
+    update_ws_data({
+        "points": gp_points
+    })
 
 
 exitlevel = False
