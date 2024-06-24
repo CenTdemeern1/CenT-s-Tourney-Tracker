@@ -1,4 +1,6 @@
-from pprint import pprint
+# This file was kinda sloppily thrown together
+
+# from pprint import pprint
 import asyncio
 from websockets.server import serve
 import threading
@@ -10,7 +12,7 @@ def update_ws_data(x: dict):
     global ws_data_json
     _ws_data.update(x)
     ws_data_json = json.dumps(_ws_data)
-    print(f"Update: {ws_data_json}")
+    # print(f"Update: {ws_data_json}")
 
 def ws_task():
     async def echo(websocket):
@@ -34,6 +36,9 @@ read_buffer = ""
 if "--ignore-catch-up" in __import__("sys").argv:
     log.read()
 
+if "--ignore-catch-up" in __import__("sys").argv:
+    log.read()
+
 def await_next_line():
     global read_buffer
     while True:
@@ -44,11 +49,53 @@ def await_next_line():
             line, read_buffer = read_buffer.split("\n", maxsplit=1)
             return line
 
+
+def calculate_gp_points(results: dict):
+    print(results)
+
+
+exitlevel = False
+award_gp_points = False
+
 while True:
     line = await_next_line()
     if line:
         # print(line, end="")
-        if line == "================BEGIN PLAYERS DATA================":
+        if line == "$exitlevel":
+            print("Exitlevel command issued, awaiting level exit")
+            exitlevel = True
+        elif exitlevel and line == "You must be in a level to use this.":
+            print("Exitlevel aborted, command invalid")
+            exitlevel = False
+        elif line == "The round has ended.":
+            if exitlevel:
+                print("The round was ended via exitlevel, no points will be awarded")
+                exitlevel = False
+                continue
+            print("Round has ended! Points will be awarded soon.")
+            award_gp_points = True
+        elif line == "================BEGIN RESULTS DATA================":
+            results = {}
+            while True:
+                line = await_next_line()
+                if line == "================ END RESULTS DATA ================":
+                    break
+                if not award_gp_points:
+                    continue
+                try:
+                    position, name = line.split(" ", maxsplit=1)
+                    position = int(position)
+                except Exception as e:
+                    print(f"Error while parsing results data: {e}")
+                    break
+                # No try-except block because this can't fail
+                if position not in results:
+                    results[position] = []
+                results[position].append(name)
+            if award_gp_points:
+                award_gp_points = False
+                calculate_gp_points(results)
+        elif line == "================BEGIN PLAYERS DATA================":
             players = []
             while True:
                 line = await_next_line()
@@ -58,6 +105,7 @@ while True:
                     position, rings, being_chased_by_spb, exploded, damaged, lap, speed_percentage, ring_delay, name = line.split(" ", maxsplit=8)
                 except Exception as e:
                     print(f"Error while parsing players data: {e}")
+                    break
                 try:
                     players.append({
                         "pos": int(position),

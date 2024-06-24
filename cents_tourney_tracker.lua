@@ -102,8 +102,31 @@ local function reset()
     end
 end
 
+local function log_match_results()
+    if consoleplayer ~= server then
+        return
+    end
+
+    print("================BEGIN RESULTS DATA================")
+    local playern = 0
+    while playern < #players do
+        if players[playern] == nil then
+            break
+        end
+        if not players[playern].spectator then
+            print(
+                tostring(players[playern].position) .. " " ..
+                tostring(players[playern].name)
+            )
+        end
+        playern = playern + 1
+    end
+    print("================ END RESULTS DATA ================\n\n\n\n\n")
+end
+
 addHook("PreThinkFrame", reset)
 addHook("PostThinkFrame", log_game_data)
 addHook("MobjThinker", find_spb_target, MT_SPB)
 addHook("MobjDeath", log_explosions, MT_PLAYER)
 addHook("MobjDamage", log_damage, MT_PLAYER)
+addHook("IntermissionThinker", log_match_results)
