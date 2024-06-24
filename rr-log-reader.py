@@ -36,8 +36,7 @@ read_buffer = ""
 if "--ignore-catch-up" in __import__("sys").argv:
     log.read()
 
-if "--ignore-catch-up" in __import__("sys").argv:
-    log.read()
+disable_points = "--no-points" in __import__("sys").argv
 
 def await_next_line():
     global read_buffer
@@ -53,6 +52,7 @@ def await_next_line():
 gp_points = {}
 
 def calculate_gp_points(results: dict):
+    if disable_points: return
     print(results)
     # Count players
     all_players = [
