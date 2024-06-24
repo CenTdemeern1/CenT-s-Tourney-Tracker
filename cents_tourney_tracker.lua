@@ -114,8 +114,12 @@ local function log_match_results()
             break
         end
         if not players[playern].spectator then
+            local position = players[playern].position
+            if players[playern].exiting == 0 then
+                position = -1
+            end
             print(
-                tostring(players[playern].position) .. " " ..
+                tostring(position) .. " " ..
                 tostring(players[playern].name)
             )
         end
