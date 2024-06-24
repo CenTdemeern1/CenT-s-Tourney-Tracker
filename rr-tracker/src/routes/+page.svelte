@@ -5,21 +5,30 @@
 <body>
     <h1>CenT's Tourney Tracker</h1>
 
-    <div class="live-stats">
-        <div class="lap-indicators">
+    <div class="all-stats">
+        <div class="live-stats" style="height: {72 + 64 * displayedPlayers.length}px">
+            <h2 class="stats-header">Live stats</h2>
+            <div class="lap-indicators">
+            </div>
+            <div class="players">
+            </div>
         </div>
-        <div class="players">
-        </div>
-    </div>
 
-    {#if displayedPlayers.length == 0}
-        <p>Waiting to receive data...</p>
-    {/if}
-    <!-- <ol>
-        {#each displayedPlayers as item}
-            <li>{item}</li>
-        {/each}
-    </ol> -->
+        {#if displayedPlayers.length == 0}
+            <p>Waiting to receive data...</p>
+        {/if}
+
+        <div class="tourney-stats">
+            <h2 class="stats-header">Tourney stats</h2>
+            <div class="players">
+            </div>
+        </div>
+        <!-- <ol>
+            {#each displayedPlayers as item}
+                <li>{item}</li>
+            {/each}
+        </ol> -->
+    </div>
 
     <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 </body>
@@ -27,12 +36,16 @@
 <script lang="ts">
     import { browser } from '$app/environment';
     import Player from './player.svelte';
+    import TourneyPlayer from './tourney_player.svelte';
     import LapIndicator from './lap_indicator.svelte';
 
     const displayedPlayers: Player[] = [];
     const lapIndicators: LapIndicator[] = [];
+    let displayedTourneyPlayers: {[key: string]: TourneyPlayer} = {};
+
     let previousData: Data = {
-        players: []
+        players: [],
+        points: {}
     };
 
     type PlayerData = {
@@ -46,8 +59,10 @@
         rd: 0 | 1 | 2 | 3 | 4 | 5 | 6,
         name: string
     };
+    type PointsData = {[key: string]: number};
     type Data = {
-        players: PlayerData[]
+        players: PlayerData[],
+        points: PointsData
     };
 
     if (browser) {
@@ -60,6 +75,7 @@
         ws.onmessage = m => {
             const liveLapStats = document.querySelector(".live-stats>.lap-indicators")!;
             const livePlayerStats = document.querySelector(".live-stats>.players")!;
+            const tourneyPlayers = document.querySelector(".tourney-stats>.players")!;
 
             let data: Data = JSON.parse(m.data);
 
@@ -162,6 +178,39 @@
                 }
                 player.$set(newPlayerData);
             }
+
+            // Tourney stats
+            const numberOfPlayersWithPoints = Object.keys(data.points).length;
+            const sortedPlayersWithPoints = Object.keys(data.points);
+            sortedPlayersWithPoints.sort((a, b) => data.points[b] - data.points[a]);
+            if (numberOfPlayersWithPoints != Object.keys(displayedTourneyPlayers).length) {
+                displayedTourneyPlayers = {};
+                while (tourneyPlayers.firstChild) {
+                    tourneyPlayers.removeChild(tourneyPlayers.firstChild);
+                }
+                for (const playerName in data.points) {
+                    const points = data.points[playerName];
+                    
+                    let newPlayer = new TourneyPlayer({
+                        target: tourneyPlayers,
+                        props: {
+                            dedupedPosition: sortedPlayersWithPoints.indexOf(playerName) + 1,
+                            name: playerName,
+                            points: points
+                        }
+                    });
+                    displayedTourneyPlayers[playerName] = newPlayer;
+                }
+            }
+            for (const playerName in data.points) {
+                const points = data.points[playerName];
+                displayedTourneyPlayers[playerName].$set({
+                    dedupedPosition: sortedPlayersWithPoints.indexOf(playerName) + 1,
+                    points: points
+                });
+            }
+
+            // Remember the previous data
             previousData = data;
         };
     }
@@ -172,6 +221,20 @@
     body {
         background-color: black;
         color: white;
+    }
+
+    .all-stats {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .stats-header {
+        height: 32px;
+        margin: 16px 0px 16px 0px;
+    }
+
+    .tourney-stats>.stats-header {
+        margin-bottom: 8px;
     }
 
     .lap-indicators {
