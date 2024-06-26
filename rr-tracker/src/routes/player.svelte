@@ -28,14 +28,16 @@
 </script> -->
 
 <div class="player dd-position-{dedupedPosition} {beingChased ? "being-chased" : "not-being-chased"} {rings > 0 ? "has-rings" : "has-no-rings"} {exploding ? "explode" : ""} {damaged ? "damage" : ""}">
-    <div class="player-transform">
-        <img src="/player_backdrop.png" alt="Player background backdrop" class="player-background" />
-        <img src="/player_backdrop_intense.png" alt="Player background backdrop with intense colors" class="player-background player-background-intense" />
-        <img src="/ring/ring{ringDelay}.webp" alt="Spinning ring icon" class="ring" />
-        <img src="/spb_rings.gif" alt="Self-Propelled Bomb chasing a player with rings" class="spb spb-rings" />
-        <img src="/spb_no_rings.gif" alt="Self-Propelled Bomb chasing a player without rings" class="spb spb-no-rings" />
-        <p class="ring-counter">{rings}</p>
-        <p class="name">{name}</p>
+    <div class="player-transform player-scale">
+        <div class="player-transform player-translate">
+            <img src="/player_backdrop.png" alt="Player background backdrop" class="player-background" />
+            <img src="/player_backdrop_intense.png" alt="Player background backdrop with intense colors" class="player-background player-background-intense" />
+            <img src="/ring/ring{ringDelay}.webp" alt="Spinning ring icon" class="ring" />
+            <img src="/spb_rings.gif" alt="Self-Propelled Bomb chasing a player with rings" class="spb spb-rings" />
+            <img src="/spb_no_rings.gif" alt="Self-Propelled Bomb chasing a player without rings" class="spb spb-no-rings" />
+            <p class="ring-counter">{rings}</p>
+            <p class="name">{name}</p>
+        </div>
     </div>
     <div class="player-speed">
         <img src="/speedometer.png" alt="Speedometer icon" class="speedometer-icon" />
@@ -73,16 +75,20 @@
         opacity: 0;
     }
 
-    .explode>.player-transform>.player-background-intense {
+    .explode>.player-scale>.player-translate>.player-background-intense {
         animation: explosion-recolor 2.5s;
     }
 
-    .damage>.player-transform {
+    .damage>.player-scale>.player-translate {
         animation: shake 0.5s linear;
     }
 
-    .explode>.player-transform {
-        animation: explosion 2.5s, shake2 0.5s linear 0.5s;
+    .explode>.player-scale>.player-translate {
+        animation: shake2 0.5s linear 0.5s;
+    }
+
+    .explode>.player-scale {
+        animation: explosion 2.5s;
         transform-origin: 50% 75%;
     }
 
@@ -98,19 +104,19 @@
         transform: translate(6px, -10px);
     }
 
-    .not-being-chased>.player-transform>.spb {
+    .not-being-chased>.player-scale>.player-translate>.spb {
         display: none;
     }
 
-    .has-no-rings>.player-transform>.spb-rings {
+    .has-no-rings>.player-scale>.player-translate>.spb-rings {
         display: none;
     }
 
-    .has-rings>.player-transform>.spb-no-rings {
+    .has-rings>.player-scale>.player-translate>.spb-no-rings {
         display: none;
     }
 
-    .player>.player-transform>p {
+    .player>.player-scale>.player-translate>p {
         position: absolute;
     }
 
