@@ -14,6 +14,56 @@ local recent_explosions = {}
 -- A list of recently damaged players
 local recent_damaged = {}
 
+local function dump(o)
+    if type(o) == 'table' then
+        local s = '{ '
+        for k, v in pairs(o) do
+            if type(k) ~= 'number' then k = '"' .. k .. '"' end
+            s = s .. '[' .. k .. '] = ' .. dump(v) .. ','
+        end
+        return s .. '} '
+    else
+        return tostring(o)
+    end
+end
+
+local function log_khaos()
+    -- CHAOS, CHAOS!
+    print("================BEGIN KHAOS DATA================")
+    local playern = 0
+    while playern < #players do
+        if players[playern] == nil then
+            break
+        end
+        if not players[playern].spectator then
+            local khaos_data = ""
+            for key, effect in pairs(players[playern].khaoseffects) do
+                if #khaos_data ~= 0 then
+                    khaos_data = khaos_data .. ";"
+                end
+                -- print(dump(effect))
+                khaos_data = khaos_data ..
+                    tostring(effect.icon) .. "|" .. 
+                    tostring(effect.notimer) .. "|" ..
+                    tostring(effect.timer) .. "|" ..
+                    tostring(effect.duration) .. "|" ..
+                    tostring(effect.noblink)
+                local effect_data = KhaosEffectsTable[effect.effect]
+                khaos_data = khaos_data .. "|" .. 
+                    tostring(effect_data.etype) .. "|" .. 
+                    tostring(effect_data.name)
+            end
+            print(
+                tostring(#khaos_data) .. "|" ..
+                khaos_data ..
+                tostring(players[playern].name)
+            )
+        end
+        playern = playern + 1
+    end
+    print("================ END KHAOS DATA ================\n\n\n\n\n")
+end
+
 local function log_game_data()
     if consoleplayer ~= server then
         return
@@ -51,6 +101,10 @@ local function log_game_data()
         playern = playern + 1
     end
     print("================ END PLAYERS DATA ================\n\n\n\n\n")
+    
+    if TailsKK ~= nil then
+        log_khaos()
+    end
 
     -- Remove all recent explosions
     for k in pairs(recent_explosions) do
