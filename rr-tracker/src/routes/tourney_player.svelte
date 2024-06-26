@@ -5,26 +5,19 @@
 </script>
 
 <div class="player dd-position-{dedupedPosition}">
-    <div class="player-transform">
-        <img src="/tourney_player_backdrop.png" alt="Player background backdrop" class="player-background" />
-        <p class="name">{name}</p>
-        <p class="points">{points}</p>
-    </div>
+    <img src="/tourney_player_backdrop.png" alt="Player background backdrop" class="player-background" />
+    <p class="name">{name}</p>
+    <p class="points">{points}</p>
 </div>
 
 <style>
     .player {
         image-rendering: pixelated;
-        /* width: 384px; */
+        width: 320px;
         height: 64px;
         margin: 0;
         display: flex;
         flex-direction: row;
-    }
-
-    .player-transform {
-        width: 384px;
-        height: 100%;
     }
 
     .player-background {
@@ -33,7 +26,7 @@
         height: 64px;
     }
 
-    .player>.player-transform>p {
+    .player>p {
         position: absolute;
     }
 
