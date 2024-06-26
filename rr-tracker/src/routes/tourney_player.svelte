@@ -38,11 +38,11 @@
     }
 
     .name {
-        translate: 58px 6px;
+        transform: translate(58px, 6px);
         color: black;
     }
 
     .points {
-        translate: 296px 6px;
+        transform: translate(296px, 6px);
     }
 </style>

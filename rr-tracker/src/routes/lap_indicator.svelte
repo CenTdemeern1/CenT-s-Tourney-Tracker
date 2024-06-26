@@ -39,12 +39,12 @@
 
     .lap-flag {
         height: 20px;
-        translate: 0px -10px;
+        transform: translate(0px, -10px);
     }
 
     .lap-number {
         height: 16px;
-        translate: 0px -8px;
+        transform: translate(0px, -8px);
         margin-left: 2px;
     }
 </style>

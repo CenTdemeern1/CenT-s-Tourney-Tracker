@@ -80,7 +80,9 @@
             let data: Data = JSON.parse(m.data);
 
             // Deduplicate positions
-            const sortedPlayers = data.players.toSorted((a, b) => a.pos - b.pos);
+            // const sortedPlayers = data.players.toSorted((a, b) => a.pos - b.pos); // Not supported in the JS version that OBS uses
+            const sortedPlayers = [...data.players];
+            sortedPlayers.sort((a, b) => a.pos - b.pos);
             let deduped_pos_by_name: {[key: string]: number} = {};
             // Also use this as an opportunity to track everyone's laps
             const laps: {lap: number, count: number}[] = [];

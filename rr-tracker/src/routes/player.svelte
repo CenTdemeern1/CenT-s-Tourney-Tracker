@@ -89,13 +89,13 @@
     .ring {
         position: absolute;
         height: 32px;
-        translate: 30px 14px;
+        transform: translate(30px, 14px);
     }
     
     .spb {
         position: absolute;
         height: 82px;
-        translate: 6px -10px;
+        transform: translate(6px, -10px);
     }
 
     .not-being-chased>.player-transform>.spb {
@@ -115,11 +115,11 @@
     }
 
     .ring-counter {
-        translate: 75px 6px;
+        transform: translate(75px, 6px);
     }
 
     .name {
-        translate: 150px 6px;
+        transform: translate(150px, 6px);
         color: black;
     }
 
@@ -145,12 +145,12 @@
     }
 
     .speedometer-digit-left {
-        translate: 2px;
+        transform: translateX(2px);
         padding-left: 4px;
     }
 
     .speedometer-digit-right {
-        translate: -2px;
+        transform: translateX(-2px);
     }
 
     .speedometer-percent {
