@@ -397,7 +397,7 @@
 
     .khaos-kontraption-universal-effect-progress {
         // width: 10%;
-        transition: width 0.5s linear;
+        transition: width 1s linear; // should be 0.5s but compensating for round trip
         height: 100%;
         margin: 0;
         background-color: #ff7b18;
