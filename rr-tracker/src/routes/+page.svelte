@@ -8,6 +8,7 @@
     <div class="all-stats">
         <div class="live-stats" style="height: {72 + 64 * displayedPlayers.length}px">
             <h2 class="stats-header">Live stats</h2>
+            {#if displayedPlayers.length == 0}
             <div class="lap-indicators">
             </div>
             <div class="players">
@@ -61,8 +62,8 @@
     };
     type PointsData = {[key: string]: number};
     type Data = {
-        players: PlayerData[],
-        points: PointsData
+        players: PlayerData[] | undefined,
+        points: PointsData | undefined
     };
 
     if (browser) {
@@ -79,137 +80,147 @@
 
             let data: Data = JSON.parse(m.data);
 
-            // Deduplicate positions
-            // const sortedPlayers = data.players.toSorted((a, b) => a.pos - b.pos); // Not supported in the JS version that OBS uses
-            const sortedPlayers = [...data.players];
-            sortedPlayers.sort((a, b) => a.pos - b.pos);
-            let deduped_pos_by_name: {[key: string]: number} = {};
-            // Also use this as an opportunity to track everyone's laps
-            const laps: {lap: number, count: number}[] = [];
-            for (let position = 0; position < sortedPlayers.length; position++) {
-                const sortedPlayer = sortedPlayers[position];
-                deduped_pos_by_name[sortedPlayer.name] = position + 1;
-                if (laps.length != 0 && laps[laps.length - 1].lap == sortedPlayer.lap) {
-                    laps[laps.length - 1].count++;
-                } else {
-                    laps.push({
-                        lap: sortedPlayer.lap,
-                        count: 1,
-                    });
-                }
-            }
-
-            // Set lap info
-            let lapI = 0;
-            while (laps.length > lapIndicators.length) {
-                const lapSet = laps[lapI];
-                let newLapIndicator = new LapIndicator({
-                    target: liveLapStats,
-                    props: {
-                        lap: lapSet.lap,
-                        height: lapSet.count
+            if (data.players !== undefined) {
+                // Deduplicate positions
+                // const sortedPlayers = data.players.toSorted((a, b) => a.pos - b.pos); // Not supported in the JS version that OBS uses
+                const sortedPlayers = [...data.players];
+                sortedPlayers.sort((a, b) => a.pos - b.pos);
+                let deduped_pos_by_name: {[key: string]: number} = {};
+                // Also use this as an opportunity to track everyone's laps
+                const laps: {lap: number, count: number}[] = [];
+                for (let position = 0; position < sortedPlayers.length; position++) {
+                    const sortedPlayer = sortedPlayers[position];
+                    deduped_pos_by_name[sortedPlayer.name] = position + 1;
+                    if (laps.length != 0 && laps[laps.length - 1].lap == sortedPlayer.lap) {
+                        laps[laps.length - 1].count++;
+                    } else {
+                        laps.push({
+                            lap: sortedPlayer.lap,
+                            count: 1,
+                        });
                     }
-                });
-                lapIndicators.unshift(newLapIndicator);
-                lapI++;
-            }
-            for (lapI = 0; lapI < laps.length; lapI++) {
-                const lapSet = laps[lapI];
-                lapIndicators[lapI].$set({
-                    lap: lapSet.lap,
-                    height: lapSet.count
-                });
-            }
-            while (laps.length < lapIndicators.length) {
-                lapIndicators.pop()?.$destroy();
-            }
-            
-            // Set player info
-            if (data.players.length != displayedPlayers.length) {
-                displayedPlayers.length = 0;
-                while (livePlayerStats.firstChild) {
-                    livePlayerStats.removeChild(livePlayerStats.firstChild);
                 }
-                for (const player of data.players) {
-                    let newPlayer = new Player({
-                        target: livePlayerStats,
+
+                // Set lap info
+                let lapI = 0;
+                while (laps.length > lapIndicators.length) {
+                    const lapSet = laps[lapI];
+                    let newLapIndicator = new LapIndicator({
+                        target: liveLapStats,
                         props: {
-                            position: player.pos,
-                            dedupedPosition: deduped_pos_by_name[player.name],
-                            name: player.name,
-                            rings: player.rings,
-                            beingChased: player.spb,
-                            exploding: player.expl,
-                            damaged: player.dmg,
-                            speedPercentage: player.sp,
-                            ringDelay: player.rd
+                            lap: lapSet.lap,
+                            height: lapSet.count
                         }
                     });
-                    displayedPlayers.push(newPlayer);
+                    lapIndicators.unshift(newLapIndicator);
+                    lapI++;
                 }
-                displayedPlayers.length = data.players.length; // Bodge to update Svelte stuff
-            }
-            for (let playerN = 0; playerN < data.players.length; playerN++) {
-                const player = displayedPlayers[playerN];
-                const playerData = data.players[playerN];
-                const previousPlayerData = previousData.players[playerN];
-                let newPlayerData: any = {
-                    position: playerData.pos,
-                    dedupedPosition: deduped_pos_by_name[playerData.name],
-                    name: playerData.name,
-                    rings: playerData.rings,
-                    beingChased: playerData.spb,
-                    speedPercentage: playerData.sp,
-                    ringDelay: playerData.rd
-                };
-                if (playerData.expl && !previousPlayerData?.expl) {
-                    newPlayerData.exploding = playerData.expl;
-                    setTimeout(() => {
-                        player.$set({
-                            exploding: false
+                for (lapI = 0; lapI < laps.length; lapI++) {
+                    const lapSet = laps[lapI];
+                    lapIndicators[lapI].$set({
+                        lap: lapSet.lap,
+                        height: lapSet.count
+                    });
+                }
+                while (laps.length < lapIndicators.length) {
+                    lapIndicators.pop()?.$destroy();
+                }
+                
+                // Set player info
+                if (data.players.length != displayedPlayers.length) {
+                    displayedPlayers.length = 0;
+                    while (livePlayerStats.firstChild) {
+                        livePlayerStats.removeChild(livePlayerStats.firstChild);
+                    }
+                    for (const player of data.players) {
+                        let newPlayer = new Player({
+                            target: livePlayerStats,
+                            props: {
+                                position: player.pos,
+                                dedupedPosition: deduped_pos_by_name[player.name],
+                                name: player.name,
+                                rings: player.rings,
+                                beingChased: player.spb,
+                                exploding: player.expl,
+                                damaged: player.dmg,
+                                speedPercentage: player.sp,
+                                ringDelay: player.rd
+                            }
                         });
-                    }, 2500); // Explosion animation takes 2500 ms
+                        displayedPlayers.push(newPlayer);
+                    }
+                    displayedPlayers.length = data.players.length; // Bodge to update Svelte stuff
                 }
-                if (playerData.dmg && !previousPlayerData?.dmg) {
-                    newPlayerData.damaged = playerData.dmg;
-                    setTimeout(() => {
-                        player.$set({
-                            damaged: false
-                        });
-                    }, 500); // Damage animation takes 500 ms
+                for (let playerN = 0; playerN < data.players.length; playerN++) {
+                    const player = displayedPlayers[playerN];
+                    const playerData = data.players[playerN];
+                    let previousPlayerData: PlayerData | null;
+                    if (previousData.players === undefined) {
+                        previousPlayerData = null;
+                    } else {
+                        previousPlayerData = previousData.players[playerN];
+                    }
+                    
+                    let newPlayerData: any = {
+                        position: playerData.pos,
+                        dedupedPosition: deduped_pos_by_name[playerData.name],
+                        name: playerData.name,
+                        rings: playerData.rings,
+                        beingChased: playerData.spb,
+                        speedPercentage: playerData.sp,
+                        ringDelay: playerData.rd
+                    };
+                    if (playerData.expl && !previousPlayerData?.expl) {
+                        newPlayerData.exploding = playerData.expl;
+                        setTimeout(() => {
+                            player.$set({
+                                exploding: false
+                            });
+                        }, 2500); // Explosion animation takes 2500 ms
+                    }
+                    if (playerData.dmg && !previousPlayerData?.dmg) {
+                        newPlayerData.damaged = playerData.dmg;
+                        setTimeout(() => {
+                            player.$set({
+                                damaged: false
+                            });
+                        }, 500); // Damage animation takes 500 ms
+                    }
+                    player.$set(newPlayerData);
                 }
-                player.$set(newPlayerData);
             }
 
-            // Tourney stats
-            const numberOfPlayersWithPoints = Object.keys(data.points).length;
-            const sortedPlayersWithPoints = Object.keys(data.points);
-            sortedPlayersWithPoints.sort((a, b) => data.points[b] - data.points[a]);
-            if (numberOfPlayersWithPoints != Object.keys(displayedTourneyPlayers).length) {
-                displayedTourneyPlayers = {};
-                while (tourneyPlayers.firstChild) {
-                    tourneyPlayers.removeChild(tourneyPlayers.firstChild);
+            if (data.points !== undefined) {
+                // Tourney stats
+                const numberOfPlayersWithPoints = Object.keys(data.points).length;
+                const sortedPlayersWithPoints = Object.keys(data.points);
+                sortedPlayersWithPoints.sort((a, b) => data.points![b] - data.points![a]);
+                if (numberOfPlayersWithPoints != Object.keys(displayedTourneyPlayers).length) {
+                    displayedTourneyPlayers = {};
+                    while (tourneyPlayers.firstChild) {
+                        tourneyPlayers.removeChild(tourneyPlayers.firstChild);
+                    }
+                    for (const playerName in data.points) {
+                        const points = data.points[playerName];
+                        
+                        let newPlayer = new TourneyPlayer({
+                            target: tourneyPlayers,
+                            props: {
+                                dedupedPosition: sortedPlayersWithPoints.indexOf(playerName) + 1,
+                                name: playerName,
+                                points: points
+                            }
+                        });
+                        displayedTourneyPlayers[playerName] = newPlayer;
+                    }
                 }
                 for (const playerName in data.points) {
                     const points = data.points[playerName];
-                    
-                    let newPlayer = new TourneyPlayer({
-                        target: tourneyPlayers,
-                        props: {
-                            dedupedPosition: sortedPlayersWithPoints.indexOf(playerName) + 1,
-                            name: playerName,
-                            points: points
-                        }
+                    displayedTourneyPlayers[playerName].$set({
+                        dedupedPosition: sortedPlayersWithPoints.indexOf(playerName) + 1,
+                        points: points
                     });
-                    displayedTourneyPlayers[playerName] = newPlayer;
                 }
-            }
-            for (const playerName in data.points) {
-                const points = data.points[playerName];
-                displayedTourneyPlayers[playerName].$set({
-                    dedupedPosition: sortedPlayersWithPoints.indexOf(playerName) + 1,
-                    points: points
-                });
             }
 
             // Remember the previous data
