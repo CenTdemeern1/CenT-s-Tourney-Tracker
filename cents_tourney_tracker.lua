@@ -30,6 +30,7 @@ end
 local function log_khaos()
     -- CHAOS, CHAOS!
     print("================BEGIN KHAOS DATA================")
+    print(TailsKK.PreviousUniversalEffect)
     local playern = 0
     while playern < #players do
         if players[playern] == nil then

@@ -159,3 +159,46 @@ while True:
             update_ws_data({
                 "players": players
             })
+        elif line == "================BEGIN KHAOS DATA================":
+            universal_effect_name = await_next_line()
+            # print("ename", universal_effect_name)
+            khaos_player_data = {}
+            while True:
+                line = await_next_line()
+                if line == "================ END KHAOS DATA ================":
+                    break
+                try:
+                    # print(line)
+                    length, data = line.split("|", maxsplit=1)
+                    length = int(length)
+                    player_name = data[length:]
+                    if length == 0:
+                        khaos_player_data[player_name] = []
+                        continue
+                    data = data[:length]
+                    effects = data.split(";")
+                    effects_data = []
+                    for effect in effects:
+                        icon, notimer, timer, duration, noblink, etype, name = effect.split("|", maxsplit=6)
+                        effects_data.append({
+                            "icon": icon,
+                            "notimer": notimer == "true",
+                            "timer": int(timer),
+                            "duration": int(duration),
+                            "noblink": noblink == "true",
+                            "etype": etype,
+                            "name": name,
+                        })
+                    khaos_player_data[player_name] = effects_data
+                except Exception as e:
+                    print(f"Error while parsing khaos data: {e}")
+                    break
+                update_ws_data({
+                    "khaos": {
+                        "univ": universal_effect_name,
+                        "players": khaos_player_data
+                    }
+                })
+            if award_gp_points:
+                award_gp_points = False
+                calculate_gp_points(results)
