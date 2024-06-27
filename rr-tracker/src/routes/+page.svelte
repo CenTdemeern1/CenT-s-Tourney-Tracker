@@ -1,9 +1,9 @@
 <head>
-    <title>CenT's Tourney Tracker</title>
+    <title>CenT's Tourney Tracker{showKhaos ? " (Khaos Edition)" : ""}</title>
 </head>
 
 <body>
-    <h1>CenT's Tourney Tracker</h1>
+    <h1>CenT's Tourney Tracker{showKhaos ? " (Khaos Edition)" : ""}</h1>
 
     <div class="all-stats">
         <div class="live-stats" style="height: {72 + 64 * displayedPlayers.length}px">
@@ -32,6 +32,20 @@
         </ol> -->
     </div>
 
+    {#if showKhaos}
+        <div class="khaos-kontraption">
+            <div class="khaos-kontraption-hud">
+                <p class="khaos-kontraption-universal-effect-header">Previous Universal Effect:</p>
+                <p class="khaos-kontraption-universal-effect-name">{previousData.khaos?.univ.name || "None"}</p>
+                <div class="khaos-kontraption-universal-effect-progress-bar">
+                    <div class="khaos-kontraption-universal-effect-progress" style="width: {(previousData.khaos?.univ.timer ?? 0) / (previousData.khaos?.univ.waittime ?? 1) * 100}%">
+                        <!-- Empty -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    {/if}
+
     <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 </body>
 
@@ -41,13 +55,16 @@
     import TourneyPlayer from './tourney_player.svelte';
     import LapIndicator from './lap_indicator.svelte';
 
+    let showKhaos = false;
+
     const displayedPlayers: Player[] = [];
     const lapIndicators: LapIndicator[] = [];
     let displayedTourneyPlayers: {[key: string]: TourneyPlayer} = {};
 
     let previousData: Data = {
         players: [],
-        points: {}
+        points: {},
+        khaos: undefined,
     };
 
     type PlayerData = {
@@ -62,9 +79,33 @@
         name: string
     };
     type PointsData = {[key: string]: number};
+    type KhaosEffect = {
+        icon: string,
+        notimer: boolean,
+        timer: number,
+        duration: number,
+        noblink: boolean,
+        etype: string,
+        name: string,
+    };
+    type KhaosData = {
+        players: {
+            [key: string]: {
+                timer: number,
+                waittime: number,
+                effects: KhaosEffect[]
+            }
+        },
+        univ: {
+            name: string,
+            timer: number,
+            waittime: number,
+        }
+    };
     type Data = {
         players: PlayerData[] | undefined,
-        points: PointsData | undefined
+        points: PointsData | undefined,
+        khaos: KhaosData | undefined
     };
 
     if (browser) {
@@ -224,6 +265,10 @@
                 }
             }
 
+            if (data.khaos !== undefined) {
+                showKhaos = true;
+            }
+
             // Remember the previous data
             previousData = data;
         };
@@ -289,4 +334,80 @@
     @include gen-pos(14);
     @include gen-pos(15);
     @include gen-pos(16);
+
+    .khaos-kontraption {
+        width: 100vw;
+        height: 100vh;
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 100;
+    }
+
+    .khaos-kontraption-hud {
+        position: absolute;
+        bottom: 0px;
+        left: 20px;
+        color: #ff9e4b;
+        font-family: "Nixdorf 8810 M15";
+        font-smooth: never;
+        -webkit-font-smoothing : none;
+    }
+
+    .khaos-kontraption-universal-effect-name {
+        font-size: 44px;
+        text-shadow:
+            -4px -4px 0 #000,
+             0px -4px 0 #000,
+             4px -4px 0 #000,
+            -4px  0px 0 #000,
+             0px  0px 0 #000,
+             4px  0px 0 #000,
+            -4px  4px 0 #000,
+             0px  4px 0 #000,
+             4px  4px 0 #000;
+        margin-top: 0;
+        margin-bottom: 14px;
+    }
+
+    .khaos-kontraption-universal-effect-header {
+        font-size: 22px;
+        text-shadow:
+            -2px -2px 0 #000,
+             0px -2px 0 #000,
+             2px -2px 0 #000,
+            -2px  0px 0 #000,
+             0px  0px 0 #000,
+             2px  0px 0 #000,
+            -2px  2px 0 #000,
+             0px  2px 0 #000,
+             2px  2px 0 #000;
+        margin-bottom: 0;
+    }
+
+    .khaos-kontraption-universal-effect-progress-bar {
+        transform: translateX(-20px);
+        width: 100vw;
+        height: 8px;
+        margin: 0;
+        background-color: black;
+    }
+
+    .khaos-kontraption-universal-effect-progress {
+        // width: 10%;
+        transition: width 0.5s linear;
+        height: 100%;
+        margin: 0;
+        background-color: #ff7b18;
+        box-shadow: 8px 0 #bc4600;
+    }
+
+    @font-face {
+        font-family: "Nixdorf 8810 M15";
+        src:
+            local("Nixdorf 8810 M15"),
+            url("Web437_Nix8810_M15.woff") format("woff");
+    }
 </style>

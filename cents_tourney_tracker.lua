@@ -30,7 +30,11 @@ end
 local function log_khaos()
     -- CHAOS, CHAOS!
     print("================BEGIN KHAOS DATA================")
-    print(TailsKK.PreviousUniversalEffect)
+    print(
+        tostring(TailsKK.ueTimer) .. "|" ..
+        tostring(TailsKK.ueTimerMax) .. "|" ..
+        tostring(TailsKK.PreviousUniversalEffect)
+    )
     local playern = 0
     while playern < #players do
         if players[playern] == nil then
@@ -55,6 +59,8 @@ local function log_khaos()
                     tostring(effect_data.name)
             end
             print(
+                tostring(players[playern].khaos.timer) .. "|" ..
+                tostring(players[playern].khaos.WaitTime) .. "|" ..
                 tostring(#khaos_data) .. "|" ..
                 khaos_data ..
                 tostring(players[playern].name)

@@ -160,7 +160,7 @@ while True:
                 "players": players
             })
         elif line == "================BEGIN KHAOS DATA================":
-            universal_effect_name = await_next_line()
+            ue_effect_timer, ue_effect_waittime, universal_effect_name = await_next_line().split("|", maxsplit=2)
             # print("ename", universal_effect_name)
             khaos_player_data = {}
             while True:
@@ -169,7 +169,7 @@ while True:
                     break
                 try:
                     # print(line)
-                    length, data = line.split("|", maxsplit=1)
+                    timer, waittime, length, data = line.split("|", maxsplit=3)
                     length = int(length)
                     player_name = data[length:]
                     if length == 0:
@@ -189,13 +189,21 @@ while True:
                             "etype": etype,
                             "name": name,
                         })
-                    khaos_player_data[player_name] = effects_data
+                    khaos_player_data[player_name] = {
+                        "timer": int(timer),
+                        "waittime": int(waittime),
+                        "effects": effects_data
+                    }
                 except Exception as e:
                     print(f"Error while parsing khaos data: {e}")
                     break
                 update_ws_data({
                     "khaos": {
-                        "univ": universal_effect_name,
+                        "univ": {
+                            "name": universal_effect_name,
+                            "timer": int(ue_effect_timer),
+                            "waittime": int(ue_effect_waittime)
+                        },
                         "players": khaos_player_data
                     }
                 })
