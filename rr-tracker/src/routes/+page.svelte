@@ -9,7 +9,7 @@
         <div class="live-stats" style="height: {72 + 64 * displayedPlayers.length}px">
             <h2 class="stats-header">Live stats</h2>
             {#if displayedPlayers.length == 0}
-                <p>Waiting to receive data...</p>
+                <p class="data-placeholder">Waiting to receive data...</p>
             {/if}
             <div class="lap-indicators">
             </div>
@@ -20,7 +20,7 @@
         <div class="tourney-stats">
             <h2 class="stats-header">Tourney stats</h2>
             {#if Object.keys(displayedTourneyPlayers).length == 0}
-                <p>Nothing to display (yet)!</p>
+                <p class="data-placeholder">Nothing to display (yet)!</p>
             {/if}
             <div class="players">
             </div>
