@@ -35,7 +35,7 @@
     {#if showKhaos}
         <div class="khaos-kontraption">
             <div class="khaos-kontraption-hud">
-                <p class="khaos-kontraption-universal-effect-header">Previous Universal Effect:</p>
+                <p class="khaos-kontraption-universal-effect-header">Last Universal Effect:</p>
                 <p class="khaos-kontraption-universal-effect-name">{previousData.khaos?.univ.name || "None"}</p>
                 <div class="khaos-kontraption-universal-effect-progress-bar">
                     <div class="khaos-kontraption-universal-effect-progress" style="width: {(previousData.khaos?.univ.timer ?? 0) / (previousData.khaos?.univ.waittime ?? 1) * 100}%">
