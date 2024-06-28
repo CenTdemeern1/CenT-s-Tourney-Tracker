@@ -179,11 +179,11 @@ while True:
                     effects = data.split(";")
                     effects_data = []
                     for effect in effects:
-                        icon, notimer, timer, duration, noblink, etype, name = effect.split("|", maxsplit=6)
+                        icon, notimer, effect_timer, duration, noblink, etype, name = effect.split("|", maxsplit=6)
                         effects_data.append({
                             "icon": icon,
                             "notimer": notimer == "true",
-                            "timer": int(timer),
+                            "timer": int(effect_timer),
                             "duration": int(duration),
                             "noblink": noblink == "true",
                             "etype": etype,
