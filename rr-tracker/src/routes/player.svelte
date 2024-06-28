@@ -1,4 +1,8 @@
+<svelte:options accessors={true} />
+
 <script lang="ts">
+    import KhaosEffect, { type KhaosEffectData } from './khaos_effect.svelte';
+
     export let position: number;
     export let dedupedPosition: number;
     export let name: string;
@@ -8,6 +12,43 @@
     export let exploding: boolean;
     export let speedPercentage: number;
     export let ringDelay: 0 | 1 | 2 | 3 | 4 | 5 | 6;
+    export let effects: KhaosEffectData[];
+    export let khaosTimer: number;
+    export let khaosWaittime: number;
+
+    $: {
+        if (effectsDiv !== undefined) onEffectsChange(effects);
+    }
+
+    let effectsDiv: HTMLDivElement | undefined;
+    const effectDisplays: KhaosEffect[] = [];
+
+    function onEffectsChange(e: KhaosEffectData[]) {
+        if (effectsDiv === undefined) return;
+        if (e.length != effectDisplays.length) {
+            effectDisplays.length = 0;
+            while (effectsDiv.firstChild) {
+                effectsDiv.removeChild(effectsDiv.firstChild);
+            }
+            for (const effect of e) {
+                let newEffect = new KhaosEffect({
+                    target: effectsDiv,
+                    props: {
+                        effect: effect
+                    }
+                });
+                effectDisplays.push(newEffect);
+            }
+            effectDisplays.length = effectDisplays.length; // Bodge to update Svelte stuff
+        }
+        for (let effectN = 0; effectN < effectDisplays.length; effectN++) {
+            const effect = effectDisplays[effectN];
+            const effectData = e[effectN];
+            effect.$set({
+                effect: effectData
+            });
+        }
+    }
 
     function getSpeedDigit(from: number, digit: 0|1|2): string {
         return Math.min(from, 999).toString().padStart(3, "0")[digit];
@@ -37,6 +78,11 @@
             <img src="/spb_no_rings.gif" alt="Self-Propelled Bomb chasing a player without rings" class="spb spb-no-rings" />
             <p class="ring-counter">{rings}</p>
             <p class="name">{name}</p>
+            <div class="khaos-progress-bar">
+                <div class="khaos-progress" style="width: {khaosTimer / khaosWaittime * 100}%;">
+                    <!-- Empty -->
+                </div>
+            </div>
         </div>
     </div>
     <div class="player-speed">
@@ -47,6 +93,9 @@
             <img src="/digits/digit{getSpeedDigit(speedPercentage, 2)}.png" alt="Speedometer digit 3" class="speedometer-digit speedometer-digit-right" />
         </div>
         <img src="/percent.png" alt="Percent sign" class="speedometer-percent" />
+    </div>
+    <div class="khaos-effects" bind:this={effectsDiv}>
+        <!-- Empty -->
     </div>
 </div>
 
@@ -161,6 +210,26 @@
 
     .speedometer-percent {
         height: 16px;
+    }
+
+    .khaos-effects {
+        height: 64px;
+        display: flex;
+        flex-direction: row;
+    }
+
+    .khaos-progress-bar {
+        transform: translate(10px, 46px);
+        width: 352px;
+        height: 2px;
+        margin: 0;
+    }
+
+    .khaos-progress {
+        transition: width 1s linear;
+        height: 100%;
+        margin: 0;
+        background-color: #ffffff;
     }
 
     @keyframes shake {

@@ -55,7 +55,7 @@ local function log_khaos()
                     tostring(effect.noblink)
                 local effect_data = KhaosEffectsTable[effect.effect]
                 khaos_data = khaos_data .. "|" .. 
-                    tostring(effect_data.etype) .. "|" .. 
+                    tostring(effect_data.etype or "neutral") .. "|" .. 
                     tostring(effect_data.name)
             end
             print(

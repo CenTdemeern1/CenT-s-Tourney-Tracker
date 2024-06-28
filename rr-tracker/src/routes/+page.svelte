@@ -54,6 +54,7 @@
     import Player from './player.svelte';
     import TourneyPlayer from './tourney_player.svelte';
     import LapIndicator from './lap_indicator.svelte';
+    import type { KhaosEffectData } from './khaos_effect.svelte';
 
     let showKhaos = false;
 
@@ -79,21 +80,12 @@
         name: string
     };
     type PointsData = {[key: string]: number};
-    type KhaosEffect = {
-        icon: string,
-        notimer: boolean,
-        timer: number,
-        duration: number,
-        noblink: boolean,
-        etype: string,
-        name: string,
-    };
     type KhaosData = {
         players: {
             [key: string]: {
                 timer: number,
                 waittime: number,
-                effects: KhaosEffect[]
+                effects: KhaosEffectData[]
             }
         },
         univ: {
@@ -186,7 +178,10 @@
                                 exploding: player.expl,
                                 damaged: player.dmg,
                                 speedPercentage: player.sp,
-                                ringDelay: player.rd
+                                ringDelay: player.rd,
+                                effects: data.khaos?.players[player.name]?.effects ?? [],
+                                khaosTimer: data.khaos?.players[player.name]?.timer ?? 0,
+                                khaosWaittime: data.khaos?.players[player.name]?.waittime ?? 1
                             }
                         });
                         displayedPlayers.push(newPlayer);
@@ -210,7 +205,10 @@
                         rings: playerData.rings,
                         beingChased: playerData.spb,
                         speedPercentage: playerData.sp,
-                        ringDelay: playerData.rd
+                        ringDelay: playerData.rd,
+                        effects: data.khaos?.players[player.name]?.effects ?? [],
+                        khaosTimer: data.khaos?.players[player.name]?.timer ?? -1,
+                        khaosWaittime: data.khaos?.players[player.name]?.waittime ?? -1
                     };
                     if (playerData.expl && !previousPlayerData?.expl) {
                         newPlayerData.exploding = playerData.expl;
