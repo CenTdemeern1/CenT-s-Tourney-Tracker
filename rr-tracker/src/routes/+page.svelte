@@ -207,8 +207,8 @@
                         speedPercentage: playerData.sp,
                         ringDelay: playerData.rd,
                         effects: data.khaos?.players[player.name]?.effects ?? [],
-                        khaosTimer: data.khaos?.players[player.name]?.timer ?? -1,
-                        khaosWaittime: data.khaos?.players[player.name]?.waittime ?? -1
+                        khaosTimer: data.khaos?.players[player.name]?.timer ?? 0,
+                        khaosWaittime: data.khaos?.players[player.name]?.waittime ?? 1
                     };
                     if (playerData.expl && !previousPlayerData?.expl) {
                         newPlayerData.exploding = playerData.expl;
