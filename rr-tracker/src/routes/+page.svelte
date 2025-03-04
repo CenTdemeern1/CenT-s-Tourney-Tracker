@@ -101,7 +101,7 @@
     };
 
     if (browser) {
-        const ws = new WebSocket(`ws://${window.location.hostname}:8081`);
+        const ws = new WebSocket(`ws${window.location.protocol == "https:" ? "s" : ""}://${window.location.hostname}:8081`);
         ws.onopen = () => {
             setInterval(() => {
                 ws.send("p");
