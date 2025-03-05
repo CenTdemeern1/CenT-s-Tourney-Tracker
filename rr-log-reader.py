@@ -5,6 +5,7 @@ import asyncio
 from websockets.server import serve
 import threading
 import json
+import platform
 
 _ws_data = {}
 ws_data_json = "{}"
@@ -29,7 +30,16 @@ def ws_task():
 ws_thread = threading.Thread(target=ws_task)
 ws_thread.start()
 
-log = open("/Users/centdemeern1/ringracers/latest-log.txt")
+match platform.system():
+    case "Windows":
+        log = open("%USERPROFILE%/latest-log.txt")
+    case "Linux": # Use Flatpak on Linux
+        log = open("~/.var/app/org.kartkrew.RingRacers/.ringracers/latest-log.txt")
+    case "Darwin":
+        log = open("~/ringracers/latest-log.txt")
+    case _:
+        print("Can this system even run Ring Racers?")
+        exit(1)
 
 read_buffer = ""
 
