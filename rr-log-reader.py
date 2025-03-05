@@ -6,6 +6,7 @@ from websockets.server import serve
 import threading
 import json
 import platform
+from pathlib import Path
 
 _ws_data = {}
 ws_data_json = "{}"
@@ -32,14 +33,15 @@ ws_thread.start()
 
 match platform.system():
     case "Windows":
-        log = open("%USERPROFILE%/latest-log.txt")
+        logpath = "ringracers/latest-log.txt"
     case "Linux": # Use Flatpak on Linux
-        log = open("~/.var/app/org.kartkrew.RingRacers/.ringracers/latest-log.txt")
+        logpath = ".var/app/org.kartkrew.RingRacers/.ringracers/latest-log.txt"
     case "Darwin":
-        log = open("~/ringracers/latest-log.txt")
+        logpath = "ringracers/latest-log.txt"
     case _:
         print("Can this system even run Ring Racers?")
         exit(1)
+log = open(Path.home().joinpath(logpath).resolve(True))
 
 read_buffer = ""
 
