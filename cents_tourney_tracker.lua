@@ -27,7 +27,11 @@ local function dump(o)
     end
 end
 
-local function shouldCheck(player)
+local function serverGuard()
+    return consoleplayer ~= server and consoleplayer ~= nil
+end
+
+local function shouldCheckPlayer(player)
     return not (player.spectator or (consoleplayer == nil and player == server))
 end
 
@@ -44,7 +48,7 @@ local function log_khaos()
         if players[playern] == nil then
             break
         end
-        if shouldCheck(players[playern]) then
+        if shouldCheckPlayer(players[playern]) then
             local khaos_data = ""
             for key, effect in pairs(players[playern].khaoseffects) do
                 if #khaos_data ~= 0 then
@@ -76,7 +80,7 @@ local function log_khaos()
 end
 
 local function log_game_data()
-    if consoleplayer ~= server and consoleplayer ~= nil then
+    if serverGuard() then
         return
     end
 
@@ -91,7 +95,7 @@ local function log_game_data()
         if players[playern] == nil then
             break
         end
-        if shouldCheck(players[playern]) then
+        if shouldCheckPlayer(players[playern]) then
             local lap = players[playern].latestlap
             if lap > numlaps then
                 lap = -1
@@ -128,7 +132,7 @@ local function log_game_data()
 end
 
 local function find_spb_target(spb)
-    if consoleplayer ~= server then
+    if serverGuard() then
         return
     end
 
@@ -138,7 +142,7 @@ local function find_spb_target(spb)
 end
 
 local function log_damage(target, inflictor, source, damage, damagetype)
-    if consoleplayer ~= server then
+    if serverGuard() then
         return
     end
 
@@ -146,7 +150,7 @@ local function log_damage(target, inflictor, source, damage, damagetype)
 end
 
 local function log_explosions(target, inflictor, source, damagetype)
-    if consoleplayer ~= server then
+    if serverGuard() then
         return
     end
     if damagetype < DMG_INSTAKILL then
@@ -157,7 +161,7 @@ local function log_explosions(target, inflictor, source, damagetype)
 end
 
 local function reset()
-    if consoleplayer ~= server then
+    if serverGuard() then
         return
     end
 
@@ -168,7 +172,7 @@ local function reset()
 end
 
 local function log_match_results()
-    if consoleplayer ~= server then
+    if serverGuard() then
         return
     end
 
@@ -178,7 +182,7 @@ local function log_match_results()
         if players[playern] == nil then
             break
         end
-        if shouldCheck(players[playern]) then
+        if shouldCheckPlayer(players[playern]) then
             local position = players[playern].position
             if players[playern].exiting == 0 then
                 position = -1
