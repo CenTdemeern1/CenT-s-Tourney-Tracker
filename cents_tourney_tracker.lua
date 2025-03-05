@@ -27,6 +27,10 @@ local function dump(o)
     end
 end
 
+local function shouldCheck(player)
+    return not (players[playern].spectator or (consoleplayer == nil and players[playern] == server))
+end
+
 local function log_khaos()
     -- CHAOS, CHAOS!
     print("================BEGIN KHAOS DATA================")
@@ -40,7 +44,7 @@ local function log_khaos()
         if players[playern] == nil then
             break
         end
-        if not players[playern].spectator then
+        if shouldCheck(players[playern]) then
             local khaos_data = ""
             for key, effect in pairs(players[playern].khaoseffects) do
                 if #khaos_data ~= 0 then
@@ -87,7 +91,7 @@ local function log_game_data()
         if players[playern] == nil then
             break
         end
-        if not (players[playern].spectator or (consoleplayer == nil and players[playern] == server)) then
+        if shouldCheck(players[playern]) then
             local lap = players[playern].latestlap
             if lap > numlaps then
                 lap = -1
@@ -174,7 +178,7 @@ local function log_match_results()
         if players[playern] == nil then
             break
         end
-        if not players[playern].spectator then
+        if shouldCheck(players[playern]) then
             local position = players[playern].position
             if players[playern].exiting == 0 then
                 position = -1
