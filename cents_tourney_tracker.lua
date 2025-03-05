@@ -72,7 +72,7 @@ local function log_khaos()
 end
 
 local function log_game_data()
-    if consoleplayer ~= server or consoleplayer == nil then
+    if consoleplayer ~= server and consoleplayer ~= nil then
         return
     end
 
@@ -87,7 +87,7 @@ local function log_game_data()
         if players[playern] == nil then
             break
         end
-        if not players[playern].spectator then
+        if not (players[playern].spectator or (consoleplayer == nil and players[playern] == server)) then
             local lap = players[playern].latestlap
             if lap > numlaps then
                 lap = -1
