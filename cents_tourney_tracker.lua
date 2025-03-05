@@ -28,7 +28,7 @@ local function dump(o)
 end
 
 local function shouldCheck(player)
-    return not (players[playern].spectator or (consoleplayer == nil and players[playern] == server))
+    return not (player.spectator or (consoleplayer == nil and player == server))
 end
 
 local function log_khaos()
