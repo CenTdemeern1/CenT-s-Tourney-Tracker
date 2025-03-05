@@ -33,7 +33,7 @@ ws_thread.start()
 
 match platform.system():
     case "Windows":
-        logpath = "ringracers/latest-log.txt"
+        logpath = "RingRacers/latest-log.txt"
     case "Linux": # Use Flatpak on Linux
         logpath = ".var/app/org.kartkrew.RingRacers/.ringracers/latest-log.txt"
     case "Darwin":
