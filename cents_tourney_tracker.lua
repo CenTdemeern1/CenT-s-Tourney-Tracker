@@ -48,14 +48,14 @@ local function log_khaos()
                 end
                 -- print(dump(effect))
                 khaos_data = khaos_data ..
-                    tostring(effect.icon) .. "|" .. 
+                    tostring(effect.icon) .. "|" ..
                     tostring(effect.notimer) .. "|" ..
                     tostring(effect.timer) .. "|" ..
                     tostring(effect.duration) .. "|" ..
                     tostring(effect.noblink)
                 local effect_data = KhaosEffectsTable[effect.effect]
-                khaos_data = khaos_data .. "|" .. 
-                    tostring(effect_data.etype or "neutral") .. "|" .. 
+                khaos_data = khaos_data .. "|" ..
+                    tostring(effect_data.etype or "neutral") .. "|" ..
                     tostring(effect_data.name)
             end
             print(
@@ -72,7 +72,7 @@ local function log_khaos()
 end
 
 local function log_game_data()
-    if consoleplayer ~= server then
+    if consoleplayer ~= server or consoleplayer == nil then
         return
     end
 
@@ -108,7 +108,7 @@ local function log_game_data()
         playern = playern + 1
     end
     print("================ END PLAYERS DATA ================\n\n\n\n\n")
-    
+
     if TailsKK ~= nil then
         log_khaos()
     end
