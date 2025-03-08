@@ -37,7 +37,8 @@ match platform.system():
     case "Linux": # Use Flatpak on Linux
         logpath = ".var/app/org.kartkrew.RingRacers/.ringracers/latest-log.txt"
         # Evil Flatpak hack to manually resolve the symlink
-        linkpath = Path.home().joinpath(logpath).readlink()
+        import os
+        linkpath = Path.home().joinpath(logpath).readlink().relative_to(Path.home())
         logpath = Path(".var/app/org.kartkrew.RingRacers").joinpath(linkpath)
     case "Darwin":
         logpath = "ringracers/latest-log.txt"
